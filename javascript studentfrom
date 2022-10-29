@@ -1,0 +1,170 @@
+var form = document.querySelector("#userForm");
+const allUsersData = [];
+
+// ------------------function to reset the form------------------
+const resetForm = function () {
+  form.classList.remove('was-validated')
+  const name = document.getElementById('name');
+  name.value = "";
+
+  const email = document.getElementById('email');
+  email.value = "";
+
+  const website = document.getElementById('website');
+  website.value = "";
+
+  const image = document.getElementById('image');
+  image.value = "";
+
+  const genderEl = document.querySelectorAll('input[name="gender"]');
+  for (const rb of genderEl) {
+    rb.checked = false;
+  }
+
+  const skillEl = document.querySelectorAll('input[name="skill"]');
+  for (const rb of skillEl) {
+    rb.checked = false;
+  }
+};
+
+// --------------------function to get the data of the form----------------------
+
+const getData = function () {
+  const name = document.getElementById('name').value;
+  const email = document.getElementById('email').value;
+  const website = document.getElementById('website').value;
+  const image = document.getElementById('image').value;
+  let gender;
+  let skills = [];
+
+  const genEl1 = document.querySelectorAll('input[name="gender"]');
+  for (const r of genEl1) {
+    if (r.checked) {
+      gender = r.value;
+      break;
+    }
+  };
+
+  const skill1 = document.querySelectorAll('input[name="skill"]');
+  for (const r of skill1) {
+    if (r.checked) {
+      skills.push(r.value);
+    }
+  }
+  return { name, email, website, image, gender, skills };
+};
+
+//-----------------------adding event listner to the "enroll student" button with type submit to submit the form
+
+form.addEventListener("submit", function (event) {
+  event.preventDefault();
+  if (form.checkValidity()) {
+    const d = getData();
+    allUsersData.push(d);
+    printResult(d);
+    resetForm();
+
+
+  } else {
+    form.classList.add('was-validated');
+  };
+  removeSpan();
+});
+
+// --------------function to remove the span tag ("fill the form to enroll the students")
+
+function removeSpan() {
+  var s = document.getElementById("span");
+  if(s){
+    s.remove();
+  }
+  
+};
+
+// ------------------function to print the form data in the right side of div by genrating html elments inside the div.
+
+function printResult(d) {
+  const r1 = document.getElementById('enrolled-students');
+  let sH = null;
+  if (allUsersData.length == 1) {
+
+    sH = document.createElement('div');
+    const desc = document.createElement('p');
+    desc.innerHTML = "";
+    desc.className = "desc";
+
+    const i = document.createElement('p');
+    i.innerHTML = ""
+    i.className = "I";
+
+    sH.className = "sH";
+    sH.append(desc, i);
+  };
+
+  const w = document.createElement('div');
+  w.className = "wrapper";
+  w.addEventListener('click', function (e) {
+    console.log(e.target.className);
+    if (e.target.className.includes('userDeleteBtn')) {
+      console.log('aaadfasdfasdf');
+      e.currentTarget.remove();
+    }
+
+  });
+
+  const dB = document.createElement('button');
+  dB.innerHTML = "+";
+  dB.className = "userDeleteBtn";
+
+  const tC = document.createElement('div');
+  tC.className = "textInfoContainer";
+
+  const iC = document.createElement('div');
+  iC.className = "imageContainer";
+
+  const iH = document.createElement('a');
+  iH.href = d.image;
+  iH.target = "_blank";
+
+
+  let name = document.createElement('p');
+  name.className = "infoText userName";
+  name.innerHTML = d.name;
+
+  let gender = document.createElement('p');
+  gender.className = "infoText gender";
+  gender.innerHTML = d.gender;
+
+  let email = document.createElement('p');
+  email.className = "infoText email";
+  email.innerHTML = d.email;
+
+  let website = document.createElement('a');
+  website.className = "infoText website";
+  website.innerHTML = d.website;
+  website.href = d.website;
+  website.target = "_blank";
+
+  let skills = document.createElement('p');
+  skills.className = "infoText skills";
+  skills.innerHTML = d.skills.join(', ');
+
+
+  let userImage = document.createElement('img');
+  userImage.className = "userImage";
+  userImage.src = d.image;
+
+
+  tC.append(name, gender, email, website, skills);
+  iH.appendChild(userImage);
+  iC.appendChild(iH);
+
+  w.append(tC, iC, dB);
+
+  if (sH == null) {
+    r1.append(w);
+  } else {
+    r1.append(sH, w)
+  };
+
+};
